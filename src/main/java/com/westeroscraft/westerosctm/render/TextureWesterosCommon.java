@@ -87,6 +87,14 @@ public class TextureWesterosCommon<T extends ITextureType> extends AbstractTextu
 			if (connectionChecks != null) {
 				func = (from, to, dir) -> connectionChecks.test(dir, to);
 			}
+			else if (connTag != null && connState != null) {
+				func = (from, to, dir) -> {
+					Property<?> p = from.getBlock().getStateDefinition().getProperty(this.connState);
+					if (p == null || !from.hasProperty(p) || !to.hasProperty(p))
+						return false;
+					return (from.is(ConnectionCheck.this.connTag) && to.is(ConnectionCheck.this.connTag) && from.getValue(p).equals(to.getValue(p)));
+				};
+			}
 			else if (connTag != null) {
 				func = (from, to, dir) -> from.is(ConnectionCheck.this.connTag) && to.is(ConnectionCheck.this.connTag);
 			}
